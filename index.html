@@ -1,1043 +1,1224 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حارس البيانات الذكي | Smart Data Guard</title>
-    <!-- تحميل Tailwind CSS للتصميم المتجاوب والسريع -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- خط عربي واضح وخفيف للأجهزة مع بدائل نظام مدمجة للعمل بدون إنترنت -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Cairo', 'Tajawal', Tahoma, Arial, sans-serif;
-            background-color: #f4f9fc;
-            color: #1e293b;
-        }
-        /* تأثير نبض خفيف لزر الحماية النشط */
-        @keyframes pulse-ring {
-            0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        .shield-active {
-            animation: pulse-ring 2.2s infinite;
-        }
-        /* تخصيص شريط التمرير */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #e2e8f0; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f766e" />
+  <title>حارس البيانات الذكي - Smart Data Guard</title>
+  <style>
+    :root {
+      --bg-main: #f0f9ff;
+      --bg-card: #ffffff;
+      --primary: #0f766e;
+      --primary-light: #ccfbf1;
+      --accent: #0284c7;
+      --gold: #d97706;
+      --gold-bg: #fef3c7;
+      --danger: #dc2626;
+      --danger-bg: #fee2e2;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --border: #cbd5e1;
+      --shadow: 0 4px 14px rgba(15, 118, 110, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f766e 0%, #0284c7 100%);
+      color: #ffffff;
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.45rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.92rem;
+      opacity: 0.95;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge-author {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .btn-guide {
+      background: #fef3c7;
+      color: #92400e;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+
+    /* بطاقة مراقب الرصيد الحالي واستهلاك اليوم */
+    .live-balance-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      border: 2px solid #38bdf8;
+    }
+
+    .live-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #bae6fd;
+      padding-bottom: 10px;
+    }
+
+    .live-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #0369a1;
+    }
+
+    .date-pill {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 14px 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #16a34a, #0284c7);
+      width: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .quick-log-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .shield-box {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(to left, #ffffff, #f0fdfa);
+      border: 2px solid #99f6e4;
+    }
+
+    .shield-status {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .shield-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.9rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .shield-on {
+      background: linear-gradient(135deg, #16a34a, #0f766e);
+      color: #fff;
+    }
+
+    .shield-off {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .stat-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-item.highlight {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .stat-item.warn {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .stat-item .label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-item .value {
+      font-size: 1.32rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .stat-item .sub {
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-top: 3px;
+    }
+
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mode-btn {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: right;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #f0fdfa;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.15);
+    }
+
+    .mode-btn strong {
+      display: block;
+      font-size: 0.96rem;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .mode-btn span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 11px 14px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.94rem;
+      background: #ffffff;
+      color: var(--text-dark);
+    }
+
+    .btn {
+      padding: 9px 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: var(--text-dark);
+    }
+
+    .app-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+    }
+
+    .app-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .app-card.allowed {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .app-card.blocked {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .app-info strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .app-info small {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #cbd5e1;
+      transition: 0.3s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #16a34a;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: var(--text-dark);
+    }
+
+    .input-unit-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .input-unit-row input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .alert-box {
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.92rem;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    .alert-green {
+      background: var(--success-bg);
+      color: #14532d;
+      border: 1px solid #86efac;
+    }
+
+    .alert-gold {
+      background: var(--gold-bg);
+      color: #78350f;
+      border: 1px solid #fcd34d;
+    }
+
+    .alert-red {
+      background: var(--danger-bg);
+      color: #7f1d1d;
+      border: 1px solid #fca5a5;
+    }
+
+    .dns-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .code-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid #94a3b8;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1rem;
+      margin-top: 8px;
+      direction: ltr;
+    }
+
+    .guide-modal {
+      display: none;
+      background: #fffbeb;
+      border: 2px solid #f59e0b;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.88rem;
+    }
+
+    .history-table th,
+    .history-table td {
+      border: 1px solid #e2e8f0;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .history-table th {
+      background: #f1f5f9;
+      color: var(--text-dark);
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      border-top: 1px solid #cbd5e1;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-100 selection:text-emerald-900">
-
-    <!-- رسالة تنبيه منبثقة مخصصة (بديل alert) -->
-    <div id="toast-box" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden transition-all duration-300 max-w-[92vw]">
-        <div id="toast-content" class="bg-white border-2 border-emerald-500 text-slate-800 px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 font-bold text-sm">
-            <span id="toast-icon" class="text-xl shrink-0">✅</span>
-            <span id="toast-msg">تمت العملية بنجاح</span>
-        </div>
-    </div>
-
-    <!-- نافذة تأكيد مخصصة (بديل confirm) -->
-    <div id="confirm-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl border border-sky-200 max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex items-center gap-3">
-                <span class="text-3xl">⚠️</span>
-                <h3 id="confirm-title" class="text-lg font-extrabold text-slate-800">تأكيد العملية</h3>
-            </div>
-            <p id="confirm-desc" class="text-sm text-slate-600 leading-relaxed">هل أنت متأكد من رغبتك في المتابعة؟</p>
-            <div class="flex justify-end gap-2.5 pt-2">
-                <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">إلغاء</button>
-                <button id="confirm-yes-btn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold cursor-pointer">نعم، متابعة</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة دليل التثبيت والاستخدام السريع (Modal) -->
-    <div id="guide-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl border border-sky-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <span class="text-2xl">📲</span>
-                    <h3 class="text-lg font-extrabold text-slate-800">دليل التثبيت السريع والعمل بدون إنترنت</h3>
-                </div>
-                <button onclick="toggleGuideModal(false)" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 font-bold cursor-pointer">✕</button>
-            </div>
-
-            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-900 leading-relaxed font-semibold">
-                💡 <strong>معلومة مطمئنة:</strong> تقييد التطبيقات في الخلفية <strong>لا يمنعك أبداً</strong> من فتح أي تطبيق يدوياً متى أردت! هو فقط يمنعها من سحب الرصيد بصمت عندما لا تستخدمها.
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div class="bg-sky-50/70 p-4 rounded-2xl border border-sky-200 space-y-2">
-                    <div class="font-extrabold text-sm text-sky-800">📱 التثبيت على هاتف أندرويد (كأيقونة تطبيق)</div>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-700 leading-relaxed">
-                        <li>افتح هذه الصفحة في متصفح <strong>Chrome</strong>.</li>
-                        <li>اضغط على النقاط الثلاث <strong>(⋮)</strong> في أعلى الشاشة.</li>
-                        <li>اختر <strong>"إضافة إلى الشاشة الرئيسية" (Add to Home screen)</strong>.</li>
-                        <li>ستظهر أيقونة <strong>حارس البيانات الذكي</strong> بجانب تطبيقاتك وتعمل 100% حتى بدون إنترنت!</li>
-                    </ol>
-                </div>
-
-                <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 space-y-2">
-                    <div class="font-extrabold text-sm text-amber-900">💻 التثبيت على كمبيوتر ويندوز (Windows 7/10/11)</div>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-700 leading-relaxed">
-                        <li>احفظ هذه الصفحة بصيغة <strong>HTML</strong> على سطح المكتب (<kbd class="bg-white px-1.5 py-0.5 rounded border">Ctrl + S</kbd>).</li>
-                        <li>أو اسحب أيقونة القفل بجانب رابط الصفحة وأفلتها على سطح المكتب.</li>
-                        <li>افتح الملف في أي وقت لإدارة باقتك وتوليد سكريبت حظر الإعلانات لويندوز.</li>
-                    </ol>
-                </div>
-            </div>
-
-            <div class="flex justify-end pt-2">
-                <button onclick="toggleGuideModal(false)" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold cursor-pointer">فهمت، إغلاق الدليل</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- الشريط العلوي والترويسة -->
-    <header class="bg-white border-b border-sky-100 shadow-xs sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2.5">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-emerald-500 flex items-center justify-center text-white text-2xl shadow-sm shrink-0">
-                    🛡️
-                </div>
-                <div>
-                    <h1 class="text-lg sm:text-xl font-extrabold text-slate-800 leading-tight">
-                        حارس البيانات الذكي <span class="text-sky-600 text-sm font-bold">(Smart Data Guard)</span>
-                    </h1>
-                    <p class="text-xs text-slate-500 font-semibold">نظام التحكم الذكي في استهلاك الإنترنت ومنع إعلانات وتطبيقات الخلفية</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 flex-wrap justify-center">
-                <button onclick="toggleGuideModal(true)" class="bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 px-3 py-1.5 rounded-full text-xs font-extrabold transition cursor-pointer flex items-center gap-1">
-                    <span>📲</span>
-                    <span>تثبيت التطبيق ودليل الاستخدام</span>
-                </button>
-                <div class="bg-amber-50 border border-amber-300 text-amber-900 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
-                    <span>✨</span>
-                    <span>الأستاذ عمر حسان عبره</span>
-                </div>
-            </div>
-        </div>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>🛡️ حارس البيانات الذكي (Smart Data Guard)</h1>
+        <p>نظام التحكم الذكي في استهلاك الإنترنت ومنع إعلانات وتطبيقات الخلفية</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-guide" onclick="toggleGuide()">📲 دليل التثبيت والاستخدام</button>
+        <span class="badge-author">✨ الأستاذ عمر حسان عبره</span>
+      </div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="max-w-6xl w-full mx-auto px-4 py-6 space-y-6 flex-grow">
+    <div id="guideBox" class="guide-modal">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong style="color:#92400e; font-size:1.05rem;">📌 كيف تتابع رصيدك وتمنع سحب الإنترنت في الخلفية؟</strong>
+        <button class="btn btn-outline" onclick="toggleGuide()">إغلاق ✖</button>
+      </div>
+      <ol style="margin:10px 0 0 0; padding-right:20px; line-height:1.7; font-size:0.9rem;">
+        <li><strong>لمعرفة رصيدك واستهلاك اليوم في أي ساعة:</strong> انظر إلى بطاقة <strong>"مراقب الرصيد الحالي واستهلاك اليوم"</strong> أدناه، وسجّل قراءة عداد هاتفك بضغطة زر في أي وقت ليخصمها من رصيدك فوراً.</li>
+        <li><strong>حظر الإعلانات الفعلي 24 ساعة:</strong> انسخ <code>dns.adguard-dns.com</code> وضعه في <strong>إعدادات الهاتف &gt; الشبكة والإنترنت &gt; DNS الخاص</strong>.</li>
+        <li><strong>منع سحب الخلفية:</strong> من <strong>إعدادات الهاتف &gt; التطبيقات</strong>، أوقف خيار <strong>"بيانات الخلفية"</strong> للتطبيقات المغلقة في القائمة.</li>
+      </ol>
+    </div>
 
-        <!-- 1. لوحة الدرع الذكي الرئيسي وعداد التوفير المباشر -->
-        <section class="bg-white rounded-3xl border border-sky-100 shadow-sm p-5 sm:p-7">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                
-                <!-- الزر الرئيسي الذكي -->
-                <div class="lg:col-span-5 flex flex-col items-center text-center p-4 bg-sky-50/70 rounded-2xl border border-sky-100">
-                    <button id="master-toggle-btn" onclick="toggleMasterShield()" class="w-28 h-28 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex flex-col items-center justify-center shadow-md transition-all cursor-pointer shield-active focus:outline-none">
-                        <span id="master-icon" class="text-4xl mb-1">🛡️</span>
-                        <span id="master-btn-label" class="text-xs font-extrabold">نشط الآن</span>
-                    </button>
-                    <h2 id="shield-status-title" class="mt-3 text-lg font-extrabold text-emerald-700">درع الحماية الذكي مُفعّل</h2>
-                    <p id="shield-status-desc" class="text-xs text-slate-600 mt-1 max-w-xs">يتم تقييد التطبيقات غير الضرورية في الخلفية وتصفية طلبات الإعلانات.</p>
-                </div>
+    <!-- بطاقة مراقب الرصيد الحالي واستهلاك اليوم -->
+    <div class="card live-balance-card">
+      <div class="live-header">
+        <h2>💳 مراقب الرصيد الحالي واستهلاك اليوم</h2>
+        <span class="date-pill" id="todayDateLabel">📅 اليوم: --</span>
+      </div>
 
-                <!-- الإحصائيات المباشرة والأوضاع الذكية -->
-                <div class="lg:col-span-7 space-y-5">
-                    <!-- بطاقات العدادات -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 text-center">
-                            <div class="text-xs font-bold text-emerald-700">البيانات المُوفّرة (تقديري)</div>
-                            <div class="text-2xl font-extrabold text-emerald-800 mt-1"><span id="saved-mb-counter">0.00</span> <span class="text-xs">MB</span></div>
-                            <div class="text-[11px] text-emerald-600 mt-0.5">بمعدل <span id="rate-per-hour">0</span> MB/ساعة</div>
-                        </div>
-                        <div class="bg-sky-50 border border-sky-200 rounded-2xl p-3.5 text-center">
-                            <div class="text-xs font-bold text-sky-700">التطبيقات المقيدة في الخلفية</div>
-                            <div class="text-2xl font-extrabold text-sky-800 mt-1"><span id="blocked-apps-count">0</span> <span class="text-xs">تطبيق</span></div>
-                            <div class="text-[11px] text-sky-600 mt-0.5">تفتح يدوياً فقط عند الحاجة</div>
-                        </div>
-                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-center">
-                            <div class="text-xs font-bold text-amber-800">توفير الرصيد (ريال يمني)</div>
-                            <div class="text-2xl font-extrabold text-amber-700 mt-1"><span id="saved-money-counter">0.0</span> <span class="text-xs">ر.ي</span></div>
-                            <div class="text-[11px] text-amber-700 mt-0.5">حسب تكلفة باقتك</div>
-                        </div>
-                    </div>
-
-                    <!-- اختيار الأوضاع الذكية بضغطة زر -->
-                    <div>
-                        <label class="block text-xs font-extrabold text-slate-700 mb-2">⚡ الأوضاع الذكية السريعة (تبديل فوري بضغطة زر):</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                            <button onclick="applyProfile('work')" id="prof-work" class="profile-btn p-3 rounded-xl border-2 border-sky-200 bg-white hover:bg-sky-50 text-right transition cursor-pointer">
-                                <div class="font-bold text-sm text-sky-800">📚 وضع العمل والدراسة</div>
-                                <div class="text-[11px] text-slate-500 mt-0.5">المتصفح والواتساب والتطبيقات التعليمية</div>
-                            </button>
-                            <button onclick="applyProfile('ultra')" id="prof-ultra" class="profile-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-right transition cursor-pointer">
-                                <div class="font-bold text-sm text-emerald-800">🔒 وضع التوفير الأقصى</div>
-                                <div class="text-[11px] text-slate-600 mt-0.5">يقيد كل الخلفيات عدا الواتساب</div>
-                            </button>
-                            <button onclick="applyProfile('free')" id="prof-free" class="profile-btn p-3 rounded-xl border-2 border-sky-200 bg-white hover:bg-sky-50 text-right transition cursor-pointer">
-                                <div class="font-bold text-sm text-amber-800">🌐 الوضع الحر (الكل)</div>
-                                <div class="text-[11px] text-slate-500 mt-0.5">يسمح لجميع التطبيقات بالعمل</div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- شريط التنقل بين الأقسام الرئيسية -->
-        <nav class="grid grid-cols-2 lg:grid-cols-4 gap-2 bg-white p-2 rounded-2xl border border-sky-100 shadow-xs">
-            <button onclick="switchTab('apps')" id="tab-btn-apps" class="tab-btn py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-sky-600 text-white shadow-xs transition cursor-pointer">
-                📱 التحكم بالتطبيقات
-            </button>
-            <button onclick="switchTab('adblock')" id="tab-btn-adblock" class="tab-btn py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-sky-50 transition cursor-pointer">
-                🚫 مانع الإعلانات والجدار الناري
-            </button>
-            <button onclick="switchTab('budget')" id="tab-btn-budget" class="tab-btn py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-sky-50 transition cursor-pointer">
-                📊 حاسبة الباقة والمنبه
-            </button>
-            <button onclick="switchTab('backup')" id="tab-btn-backup" class="tab-btn py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-sky-50 transition cursor-pointer">
-                💾 النسخ الاحتياطي والإعدادات
-            </button>
-        </nav>
-
-        <!-- القسم الأول: مدير التطبيقات المسموحة والمقيدة في الخلفية -->
-        <section id="section-apps" class="bg-white rounded-3xl border border-sky-100 shadow-sm p-5 sm:p-6 space-y-5">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                <div>
-                    <h3 class="text-lg font-extrabold text-slate-800">قائمة التحكم الذكي بالتطبيقات (القائمة البيضاء)</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">
-                        حدد التطبيقات المسموح لها بالعمل في الخلفية (<span class="text-emerald-600 font-bold">مسموح في الخلفية</span>) أو قيدها (<span class="text-rose-600 font-bold">مقيد في الخلفية - يفتح يدوياً فقط</span>).
-                    </p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="allowAllApps(false)" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition cursor-pointer">
-                        ⛔ تقييد الكل في الخلفية
-                    </button>
-                    <button onclick="allowAllApps(true)" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition cursor-pointer">
-                        ✅ السماح للكل
-                    </button>
-                </div>
-            </div>
-
-            <!-- شريط البحث والتصفية + إضافة تطبيق مخصص -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
-                <!-- البحث والتصفية -->
-                <div class="lg:col-span-5 flex gap-2">
-                    <input type="text" id="search-app-input" oninput="renderApps()" placeholder="🔍 ابحث عن تطبيق..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-sky-500">
-                    <select id="filter-app-status" onchange="renderApps()" class="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 focus:outline-none">
-                        <option value="all">الكل</option>
-                        <option value="allowed">المسموحة فقط</option>
-                        <option value="blocked">المقيدة فقط</option>
-                    </select>
-                </div>
-
-                <!-- إضافة تطبيق مخصص -->
-                <div class="lg:col-span-7 bg-sky-50/70 p-2 rounded-2xl border border-sky-100 flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="custom-app-name" placeholder="اسم تطبيق/برنامج جديد (مثال: زووم، سناب، IDM)..." class="flex-grow px-3.5 py-2 rounded-xl bg-white border border-sky-200 text-sm focus:outline-none focus:border-sky-500">
-                    <select id="custom-app-category" class="px-2.5 py-2 rounded-xl bg-white border border-sky-200 text-xs font-bold text-slate-700 focus:outline-none">
-                        <option value="تعليم وعمل" data-usage="20">📚 تعليم وعمل</option>
-                        <option value="تواصل اجتماعي" data-usage="55" selected>💬 تواصل اجتماعي</option>
-                        <option value="فيديو وترفيه" data-usage="85">🎬 فيديو وترفيه</option>
-                        <option value="أدوات ونظام" data-usage="40">⚙️ أدوات ونظام</option>
-                    </select>
-                    <button onclick="addCustomApp()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition cursor-pointer shrink-0">
-                        + إضافة
-                    </button>
-                </div>
-            </div>
-
-            <!-- شبكة التطبيقات -->
-            <div id="apps-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                <!-- يتم تعبئتها تلقائياً عبر الجافاسكربت -->
-            </div>
-
-            <!-- تنويه توضيحي مطمئن -->
-            <div class="bg-sky-50 border border-sky-200 rounded-2xl p-3.5 text-xs text-sky-900 flex items-center gap-2.5">
-                <span class="text-xl shrink-0">ℹ️</span>
-                <span><strong>توضيح مهم:</strong> أي تطبيق يحمل شارة <strong>"مقيد في الخلفية (يفتح يدوياً فقط)"</strong> يمكنك فتحه واستخدامه بشكل طبيعي في أي لحظة تضغط فيها على أيقونته، لكنه يتوقف عن استهلاك البيانات والإعلانات فور إغلاقه.</span>
-            </div>
-        </section>
-
-        <!-- القسم الثاني: مانع الإعلانات الفوري والجدار الناري -->
-        <section id="section-adblock" class="hidden bg-white rounded-3xl border border-sky-100 shadow-sm p-5 sm:p-6 space-y-6">
-            <div class="border-b border-slate-100 pb-4">
-                <h3 class="text-lg font-extrabold text-slate-800">🚫 مركز حظر الإعلانات الفوري والجدار الناري</h3>
-                <p class="text-xs text-slate-500 mt-1">استخدم تقنية <strong>DNS الخاص الذكي</strong> لحظر الإعلانات المنبثقة وإعلانات الألعاب والتطبيقات من المصدر بدون تثبيت أي تطبيقات إضافية.</p>
-            </div>
-
-            <!-- بطاقات عناوين DNS الذكية -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold">الأقوى لحظر الإعلانات</span>
-                        <span class="text-xs font-bold text-emerald-800">AdGuard DNS</span>
-                    </div>
-                    <h4 class="font-extrabold text-base text-slate-800">خادم حظر الإعلانات والتتبع الشامل</h4>
-                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-emerald-300">
-                        <code class="text-sm font-bold text-emerald-700 select-all" dir="ltr">dns.adguard-dns.com</code>
-                        <button onclick="copyText('dns.adguard-dns.com', 'تم نسخ عنوان AdGuard DNS بنجاح!')" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer">
-                            نسخ العنوان
-                        </button>
-                    </div>
-                    <p class="text-xs text-slate-600">يمنع الإعلانات داخل التطبيقات والألعاب والمتصفحات ويوفر حتى 25% من استهلاك باقتك.</p>
-                </div>
-
-                <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-200 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full bg-sky-600 text-white text-[11px] font-bold">حماية وأمان فائق</span>
-                        <span class="text-xs font-bold text-sky-800">Cloudflare Security</span>
-                    </div>
-                    <h4 class="font-extrabold text-base text-slate-800">خادم الحماية من الروابط الضارة والتتبع</h4>
-                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-sky-300">
-                        <code class="text-sm font-bold text-sky-700 select-all" dir="ltr">security.cloudflare-dns.com</code>
-                        <button onclick="copyText('security.cloudflare-dns.com', 'تم نسخ عنوان Cloudflare DNS بنجاح!')" class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition cursor-pointer">
-                            نسخ العنوان
-                        </button>
-                    </div>
-                    <p class="text-xs text-slate-600">يوفر تصفحاً فائق السرعة ويحجب المواقع الخبيثة والبرمجيات التي تستهلك البيانات خفية.</p>
-                </div>
-            </div>
-
-            <!-- خطوات التفعيل السريعة -->
-            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
-                <h4 class="font-extrabold text-sm text-slate-800">📌 خطوات التفعيل في 10 ثوانٍ على جميع الأجهزة:</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
-                        <div class="font-extrabold text-sky-700 mb-1">1️⃣ هواتف أندرويد (Android)</div>
-                        <p class="text-slate-600 leading-relaxed">افتح <strong>الضبط (Settings)</strong> ⬅️ <strong>الشبكة والإنترنت أو الاتصالات</strong> ⬅️ <strong>DNS الخاص (Private DNS)</strong> ⬅️ اختر "اسم مضيف مزود DNS الخاص" والصق العنوان أعلاه ثم اضغط <strong>حفظ</strong>.</p>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
-                        <div class="font-extrabold text-emerald-700 mb-1">2️⃣ هواتف آيفون (iPhone)</div>
-                        <p class="text-slate-600 leading-relaxed">افتح <strong>الإعدادات</strong> ⬅️ <strong>Wi-Fi</strong> ⬅️ اضغط على علامة <strong>(i)</strong> بجانب شبكتك ⬅️ <strong>تكوين DNS</strong> ⬅️ اختر <strong>يدوي</strong> وأضف الخادم <code dir="ltr" class="bg-slate-100 px-1 font-bold">94.140.14.14</code>.</p>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
-                        <div class="font-extrabold text-amber-700 mb-1">3️⃣ كمبيوتر ويندوز (Windows 7/10/11)</div>
-                        <p class="text-slate-600 leading-relaxed">افتح <strong>لوحة التحكم</strong> ⬅️ <strong>مركز الشبكة والمشاركة</strong> ⬅️ <strong>تغيير إعدادات المحول</strong> ⬅️ خصائص الإنترنت <strong>IPv4</strong> ⬅️ ضع <code dir="ltr" class="bg-slate-100 px-1 font-bold">94.140.14.14</code> و <code dir="ltr" class="bg-slate-100 px-1 font-bold">94.140.15.15</code>.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- أداة توليد وتحميل سكريبت الحظر والجدار الناري لويندوز -->
-            <div class="bg-amber-50/90 border border-amber-300 rounded-2xl p-4 sm:p-5 space-y-3">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div>
-                        <h4 class="font-extrabold text-sm text-amber-900">💻 أداة حظر الإعلانات والتحديثات الصامتة للكمبيوتر (Windows 7 / 10 / 11)</h4>
-                        <p class="text-xs text-amber-800 mt-0.5">حمّل ملف التشغيل التلقائي (<code dir="ltr">.bat</code>) أو ملف القواعد (<code dir="ltr">.txt</code>) لحظر سيرفرات الإعلانات وتقارير مايكروسوفت الخلفية بضغطة واحدة.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 shrink-0">
-                        <button onclick="downloadWindowsScript('bat')" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer">
-                            ⬇️ تحميل ملف التشغيل (.bat)
-                        </button>
-                        <button onclick="downloadWindowsScript('txt')" class="px-4 py-2.5 rounded-xl bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-extrabold transition cursor-pointer">
-                            📄 تحميل كملف نصي (.txt)
-                        </button>
-                    </div>
-                </div>
-                <textarea id="windows-script-preview" rows="5" readonly class="w-full p-3 rounded-xl bg-white border border-amber-200 text-xs font-mono text-left text-slate-700" dir="ltr"></textarea>
-                <p class="text-[11px] text-amber-900 font-semibold">طريقة التشغيل على الكمبيوتر: انقر بزر الفأرة الأيمن على ملف <code dir="ltr">SmartDataGuard_Blocker.bat</code> واختر <strong>"تشغيل كمسؤول" (Run as administrator)</strong> لتطبيق الحظر فوراً.</p>
-            </div>
-        </section>
-
-        <!-- القسم الثالث: حاسبة الباقة الذكية ومنبه الاستهلاك -->
-        <section id="section-budget" class="hidden bg-white rounded-3xl border border-sky-100 shadow-sm p-5 sm:p-6 space-y-6">
-            <div class="border-b border-slate-100 pb-4">
-                <h3 class="text-lg font-extrabold text-slate-800">📊 حاسبة الباقة الذكية ومنبه الاستهلاك</h3>
-                <p class="text-xs text-slate-500 mt-1">أدخل بيانات باقتك ليقوم النظام بحساب الحصة اليومية الآمنة وتنبيهك بالألوان الذكية قبل نفاد الرصيد.</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">حجم الباقة الكلي:</label>
-                    <div class="flex">
-                        <input type="number" id="pkg-size" value="5" min="0.1" step="0.5" oninput="calculateBudget()" class="w-full px-3 py-2.5 rounded-r-xl border border-sky-200 text-sm font-bold focus:outline-none focus:border-sky-500">
-                        <select id="pkg-unit" onchange="calculateBudget()" class="px-2.5 py-2.5 rounded-l-xl bg-sky-50 border border-r-0 border-sky-200 text-xs font-extrabold text-sky-800">
-                            <option value="GB" selected>GB</option>
-                            <option value="MB">MB</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">مدة صلاحية الباقة (أيام):</label>
-                    <input type="number" id="pkg-days" value="30" min="1" max="365" oninput="calculateBudget()" class="w-full px-3 py-2.5 rounded-xl border border-sky-200 text-sm font-bold focus:outline-none focus:border-sky-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الأيام المنقضية من الباقة:</label>
-                    <input type="number" id="pkg-elapsed-days" value="7" min="0" max="365" oninput="calculateBudget()" class="w-full px-3 py-2.5 rounded-xl border border-sky-200 text-sm font-bold focus:outline-none focus:border-sky-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">المستهلك فعلياً (MB):</label>
-                    <input type="number" id="pkg-used-mb" value="1100" min="0" oninput="calculateBudget()" class="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50/40 text-sm font-bold focus:outline-none focus:border-amber-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">سعر الباقة (ريال يمني):</label>
-                    <input type="number" id="pkg-price" value="2500" min="0" oninput="calculateBudget()" class="w-full px-3 py-2.5 rounded-xl border border-sky-200 text-sm font-bold focus:outline-none focus:border-sky-500">
-                </div>
-            </div>
-
-            <!-- نتائج التحليل الذكي للباقة -->
-            <div class="bg-sky-50/80 border border-sky-200 rounded-2xl p-5 space-y-4">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-center">
-                    <div class="bg-white p-3.5 rounded-xl border border-sky-100">
-                        <div class="text-xs text-slate-500 font-bold">الحصة اليومية الآمنة</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-sky-700 mt-1"><span id="daily-allowance-mb">0</span> MB/يوم</div>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-sky-100">
-                        <div class="text-xs text-slate-500 font-bold">المتبقي من الباقة</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-emerald-700 mt-1"><span id="remaining-mb">0</span> MB</div>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-sky-100">
-                        <div class="text-xs text-slate-500 font-bold">المتاح للأيام المتبقية</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-indigo-700 mt-1"><span id="adjusted-daily-mb">0</span> MB/يوم</div>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-sky-100">
-                        <div class="text-xs text-slate-500 font-bold">نسبة الاستهلاك</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-amber-700 mt-1"><span id="usage-percent">0</span>%</div>
-                    </div>
-                </div>
-
-                <!-- شريط التقدم -->
-                <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden p-0.5">
-                    <div id="budget-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 25%"></div>
-                </div>
-
-                <!-- تنبيه الذكاء الاصطناعي الملون -->
-                <div id="smart-budget-advice" class="p-4 rounded-xl bg-white border-r-4 border-emerald-500 text-xs sm:text-sm font-bold text-slate-700 leading-relaxed">
-                    💡 تحليل النظام الذكي: استهلاكك آمن ومتوازن!
-                </div>
-            </div>
-        </section>
-
-        <!-- القسم الرابع: النسخ الاحتياطي وتصدير/استيراد الإعدادات -->
-        <section id="section-backup" class="hidden bg-white rounded-3xl border border-sky-100 shadow-sm p-5 sm:p-6 space-y-6">
-            <div class="border-b border-slate-100 pb-4">
-                <h3 class="text-lg font-extrabold text-slate-800">💾 النسخ الاحتياطي، التصدير، والاستيراد</h3>
-                <p class="text-xs text-slate-500 mt-1">احفظ قائمة تطبيقاتك المخصصة وإعدادات باقتك كملف احتياطي (<code dir="ltr">.json</code>) لنقلها إلى أي جهاز أو متصفح آخر بسهولة.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- تصدير الإعدادات -->
-                <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 flex flex-col justify-between space-y-4">
-                    <div class="space-y-2">
-                        <span class="text-3xl">📤</span>
-                        <h4 class="font-extrabold text-base text-emerald-900">تصدير الإعدادات (نسخة احتياطية)</h4>
-                        <p class="text-xs text-emerald-800 leading-relaxed">تنزيل ملف JSON يحتوي على قائمة التطبيقات المسموحة والمقيدة وإعدادات الباقة الخاصة بك.</p>
-                    </div>
-                    <button onclick="exportSettingsJSON()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer">
-                        ⬇️ تصدير الإعدادات الآن
-                    </button>
-                </div>
-
-                <!-- استيراد الإعدادات -->
-                <div class="p-5 rounded-2xl bg-sky-50/70 border border-sky-200 flex flex-col justify-between space-y-4">
-                    <div class="space-y-2">
-                        <span class="text-3xl">📥</span>
-                        <h4 class="font-extrabold text-base text-sky-900">استيراد الإعدادات المحفوظة</h4>
-                        <p class="text-xs text-sky-800 leading-relaxed">اختر ملف النسخة الاحتياطية (<code dir="ltr">.json</code>) لاستعادة قائمتك وإعداداتك فوراً على هذا الجهاز.</p>
-                    </div>
-                    <div>
-                        <input type="file" id="import-json-input" accept=".json" onchange="importSettingsJSON(event)" class="hidden">
-                        <button onclick="document.getElementById('import-json-input').click()" class="w-full py-2.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer">
-                            📂 اختيار ملف واستيراده
-                        </button>
-                    </div>
-                </div>
-
-                <!-- استعادة الإعدادات الافتراضية -->
-                <div class="p-5 rounded-2xl bg-rose-50/70 border border-rose-200 flex flex-col justify-between space-y-4">
-                    <div class="space-y-2">
-                        <span class="text-3xl">🔄</span>
-                        <h4 class="font-extrabold text-base text-rose-900">استعادة الإعدادات الافتراضية</h4>
-                        <p class="text-xs text-rose-800 leading-relaxed">إعادة ضبط التطبيق وقائمة البرامج إلى حالتها الأصلية وتصفير العدادات.</p>
-                    </div>
-                    <button onclick="confirmResetDefaults()" class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer">
-                        ⚠️ استعادة الضبط الافتراضي
-                    </button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- التذييل وحقوق المطور -->
-    <footer class="bg-white border-t border-sky-100 py-4 px-4 mt-8">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
-            <div class="font-bold text-center sm:text-right">
-                🛡️ <span class="text-slate-800">حارس البيانات الذكي (Smart Data Guard)</span> — يعمل بكفاءة 100% بدون إنترنت على أندرويد وويندوز.
-            </div>
-            <div class="font-extrabold text-amber-900 bg-amber-50 px-4 py-1.5 rounded-full border border-amber-300 text-center">
-                تصميم وتطوير الأستاذ عمر حسان عبره | واتساب: <span dir="ltr">00967737219181</span>
-            </div>
+      <div class="stats-grid">
+        <div class="stat-item highlight">
+          <div class="label">الرصيد المتبقي الحالي</div>
+          <div class="value" id="topRemainingGb" style="color:#16a34a;">10.54 GB</div>
+          <div class="sub" id="topRemainingMb">10793 MB متبقية من الباقة</div>
         </div>
+
+        <div class="stat-item warn">
+          <div class="label">مستهلك اليوم (حتى هذه الساعة)</div>
+          <div class="value" id="topTodayUsed" style="color:#d97706;">0 MB</div>
+          <div class="sub" id="topTodaySub">0.00 GB اليوم</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="label">المتبقي من حصة اليوم الآمنة</div>
+          <div class="value" id="topTodayLeft">300 MB</div>
+          <div class="sub" id="topDailyLimitSub">الحد اليومي: 300 MB</div>
+        </div>
+      </div>
+
+      <div class="progress-wrap" title="نسبة الرصيد المتبقي من الباقة">
+        <div class="progress-bar" id="balanceProgressBar"></div>
+      </div>
+
+      <div class="quick-log-box">
+        <strong style="font-size:0.9rem; color:#0369a1;">⚡ تسجيل استهلاك سريع:</strong>
+        <input type="number" id="quickAddAmount" step="0.01" min="0.01" placeholder="مثلاً: 250 أو 0.5" style="width:140px;" />
+        <select id="quickAddUnit">
+          <option value="MB" selected>MB (ميجا)</option>
+          <option value="GB">GB (جيجا)</option>
+        </select>
+        <button class="btn btn-primary" onclick="addTodayUsage()">➕ أضف لاستهلاك اليوم</button>
+        <button class="btn btn-outline" onclick="undoLastLog()" title="التراجع عن آخر إضافة">↩️ تراجع</button>
+        <button class="btn btn-outline" onclick="resetTodayUsage()" title="تصفير عداد اليوم فقط">🔄 تصفير اليوم</button>
+      </div>
+    </div>
+
+    <!-- لوحة الدرع الرئيسية -->
+    <div class="card shield-box">
+      <div class="shield-status">
+        <button id="mainShieldBtn" class="shield-btn shield-on" onclick="toggleShield()">🛡️</button>
+        <div>
+          <span id="shieldBadge" style="background:#dcfce7; color:#166534; padding:3px 10px; border-radius:999px; font-size:0.8rem; font-weight:bold;">نشط الآن</span>
+          <h2 id="shieldTitle" style="margin:6px 0 4px 0; font-size:1.15rem;">درع الحماية الذكي مُفعّل</h2>
+          <p id="shieldDesc" style="margin:0; font-size:0.86rem; color:var(--text-muted);">يتم تقييد التطبيقات غير الضرورية في الخلفية وتصفية طلبات الإعلانات.</p>
+        </div>
+      </div>
+
+      <div class="stats-grid" style="width:100%;">
+        <div class="stat-item">
+          <div class="label">البيانات المُوفّرة (تقديري)</div>
+          <div class="value" id="savedMbDisplay">0.00 MB</div>
+          <div class="sub" id="saveRateDisplay">بمعدل 0 MB/ساعة</div>
+        </div>
+        <div class="stat-item">
+          <div class="label">التطبيقات المقيدة في الخلفية</div>
+          <div class="value" id="blockedCountDisplay">0 تطبيق</div>
+          <div class="sub">تفتح يدوياً فقط عند الحاجة</div>
+        </div>
+        <div class="stat-item">
+          <div class="label">توفير الرصيد (ريال يمني)</div>
+          <div class="value" id="savedMoneyDisplay">0.0 ر.ي</div>
+          <div class="sub">حسب تكلفة باقتك</div>
+        </div>
+      </div>
+
+      <div style="width:100%; margin-top:10px;">
+        <strong style="font-size:0.9rem;">⚡ الأوضاع الذكية السريعة (تبديل فوري بضغطة زر):</strong>
+        <div class="modes-grid">
+          <button class="mode-btn active" id="mode-work" onclick="applyMode('work')">
+            <strong>📚 وضع العمل والدراسة</strong>
+            <span>المتصفح والواتساب والتطبيقات التعليمية</span>
+          </button>
+          <button class="mode-btn" id="mode-ultra" onclick="applyMode('ultra')">
+            <strong>🔒 وضع التوفير الأقصى</strong>
+            <span>يقيد كل الخلفيات عدا الواتساب</span>
+          </button>
+          <button class="mode-btn" id="mode-free" onclick="applyMode('free')">
+            <strong>🌐 الوضع الحر (الكل)</strong>
+            <span>يسمح لجميع التطبيقات بالعمل</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- التبويبات -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openTab('tab-apps', this)">📱 التحكم بالتطبيقات</button>
+      <button class="tab-btn" onclick="openTab('tab-calc', this)">📊 إعدادات الباقة وسجل الأيام</button>
+      <button class="tab-btn" onclick="openTab('tab-dns', this)">🚫 مانع الإعلانات</button>
+      <button class="tab-btn" onclick="openTab('tab-backup', this)">💾 النسخ الاحتياطي</button>
+    </div>
+
+    <!-- تبويب 1: التطبيقات -->
+    <div id="tab-apps" class="card tab-content active">
+      <h3 style="margin-top:0;">📱 قائمة التطبيقات (القائمة البيضاء مقابل المقيدة في الخلفية)</h3>
+      <p style="font-size:0.88rem; color:var(--text-muted);">
+        التطبيقات ذات الزر <strong>الأخضر</strong> مسموح لها بالعمل، والتطبيقات ذات الزر <strong>المغلق</strong> مقيدة في الخلفية لتوفير الرصيد (ويمكنك فتحها يدوياً في أي وقت).
+      </p>
+
+      <div class="toolbar">
+        <input type="text" id="searchAppInput" placeholder="🔍 ابحث عن تطبيق..." oninput="renderApps()" style="flex:1; min-width:160px;" />
+        <input type="text" id="newAppName" placeholder="اسم تطبيق جديد لإضافته..." style="flex:1; min-width:180px;" />
+        <select id="newAppRate">
+          <option value="60">استهلاك عالي (60 MB/ساعة)</option>
+          <option value="30" selected>استهلاك متوسط (30 MB/ساعة)</option>
+          <option value="10">استهلاك خفيف (10 MB/ساعة)</option>
+        </select>
+        <button class="btn btn-primary" onclick="addCustomApp()">➕ إضافة</button>
+      </div>
+
+      <div id="appsContainer" class="app-list"></div>
+    </div>
+
+    <!-- تبويب 2: إعدادات الباقة وسجل الأيام -->
+    <div id="tab-calc" class="card tab-content">
+      <h3 style="margin-top:0;">📊 إعدادات الباقة الكلية وسجل الاستهلاك اليومي</h3>
+      <p style="font-size:0.88rem; color:var(--text-muted);">
+        اضبط بيانات باقتك الأساسية هنا ليقوم النظام بحساب الرصيد المتبقي وحصتك اليومية بدقة:
+      </p>
+
+      <div class="calc-grid">
+        <div class="form-group">
+          <label>حجم الباقة الكلي (GB):</label>
+          <input type="number" id="pkgTotalGb" step="0.01" min="0.1" value="10.54" oninput="syncCalculatorInputs()" style="width:100%;" />
+        </div>
+
+        <div class="form-group">
+          <label>مدة صلاحية الباقة (أيام):</label>
+          <input type="number" id="pkgDays" min="1" value="36" oninput="syncCalculatorInputs()" style="width:100%;" />
+        </div>
+
+        <div class="form-group">
+          <label>الأيام المنقضية من الباقة:</label>
+          <input type="number" id="pkgElapsedDays" min="0" value="0" oninput="syncCalculatorInputs()" style="width:100%;" />
+        </div>
+
+        <div class="form-group">
+          <label>إجمالي المستهلك من الباقة (تُحدّث تلقائياً):</label>
+          <div class="input-unit-row">
+            <input type="number" id="pkgUsedValue" step="0.01" min="0" value="0" oninput="syncCalculatorInputs()" />
+            <select id="pkgUsedUnit" onchange="syncCalculatorInputs()">
+              <option value="MB" selected>MB (ميجا)</option>
+              <option value="GB">GB (جيجا)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>سعر الباقة (ريال يمني):</label>
+          <input type="number" id="pkgPrice" min="0" value="1250" oninput="syncCalculatorInputs()" style="width:100%;" />
+        </div>
+      </div>
+
+      <div id="calcAlert" class="alert-box alert-green"></div>
+
+      <h4 style="margin:18px 0 8px 0;">📅 سجل استهلاكك اليومي المحفوظ:</h4>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>المستهلك في ذلك اليوم (MB)</th>
+            <th>المستهلك بالجيجا (GB)</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="dailyHistoryBody"></tbody>
+      </table>
+    </div>
+
+    <!-- تبويب 3: مانع الإعلانات -->
+    <div id="tab-dns" class="card tab-content">
+      <h3 style="margin-top:0;">🚫 مانع الإعلانات الشامل (بدون برامج إضافية)</h3>
+      <p style="font-size:0.9rem; color:var(--text-muted);">
+        انسخ أحد العناوين التالية وضعه في <strong>إعدادات الهاتف &gt; الشبكة والإنترنت &gt; DNS الخاص (Private DNS)</strong> ليتم حظر الإعلانات في جميع التطبيقات والألعاب تلقائياً:
+      </p>
+
+      <div class="dns-box">
+        <strong>1. خادم AdGuard DNS (الأقوى لحظر الإعلانات والتتبع):</strong>
+        <div class="code-line">
+          <span id="dns1">dns.adguard-dns.com</span>
+          <button class="btn btn-primary" onclick="copyText('dns1')">📋 نسخ</button>
+        </div>
+      </div>
+
+      <div class="dns-box">
+        <strong>2. خادم Cloudflare Security (سريع جداً ويحظر المواقع الضارة):</strong>
+        <div class="code-line">
+          <span id="dns2">security.cloudflare-dns.com</span>
+          <button class="btn btn-accent" onclick="copyText('dns2')">📋 نسخ</button>
+        </div>
+      </div>
+
+      <div class="dns-box" style="background:#f0fdf4; border-color:#bbf7d0;">
+        <strong>💻 سكريبت حظر الإعلانات والتتبع للكمبيوتر (Windows 7 / 10 / 11):</strong>
+        <p style="font-size:0.85rem; margin:6px 0;">حمّل الملف وشغّله كمسؤول (Run as Administrator) لحظر سيرفرات الإعلانات على حاسوبك فوراً:</p>
+        <button class="btn btn-primary" onclick="downloadWindowsBat()">⬇️ تحميل ملف الحظر للكمبيوتر (.bat)</button>
+      </div>
+    </div>
+
+    <!-- تبويب 4: النسخ الاحتياطي -->
+    <div id="tab-backup" class="card tab-content">
+      <h3 style="margin-top:0;">💾 النسخ الاحتياطي واستعادة الإعدادات</h3>
+      <p style="font-size:0.88rem; color:var(--text-muted);">
+        يتم حفظ رصيدك وسجل استهلاكك اليومي وقائمة تطبيقاتك تلقائياً في متصفحك. يمكنك تصدير نسخة احتياطية في أي وقت:
+      </p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px;">
+        <button class="btn btn-primary" onclick="exportSettings()">📤 تصدير الإعدادات والسجل (JSON)</button>
+        <label class="btn btn-accent" style="display:inline-block;">
+          📥 استيراد ملف إعدادات
+          <input type="file" accept=".json" onchange="importSettings(event)" style="display:none;" />
+        </label>
+        <button class="btn btn-danger" onclick="resetDefaults()">🔄 استعادة الضبط الافتراضي</button>
+      </div>
+    </div>
+
+    <footer>
+      🛡️ <strong>حارس البيانات الذكي (Smart Data Guard)</strong> — يعمل بكفاءة 100% بدون إنترنت على أندرويد وويندوز.<br />
+      تصميم وتطوير <strong>الأستاذ عمر حسان عبره</strong> | واتساب: <strong>00967737219181</strong>
     </footer>
+  </div>
 
-    <script>
-        // ==========================================
-        // البيانات الافتراضية وإدارة التخزين المحلي
-        // ==========================================
-        const DEFAULT_APPS = [
-            { id: 'whatsapp', name: 'واتساب (WhatsApp)', category: 'تواصل اجتماعي', icon: '💬', allowed: true, usagePerHour: 12, essential: true },
-            { id: 'chrome', name: 'متصفح كروم (Chrome)', category: 'تعليم وعمل', icon: '🌐', allowed: true, usagePerHour: 25, essential: true },
-            { id: 'edu', name: 'التطبيقات التعليمية والمنصات', category: 'تعليم وعمل', icon: '🎓', allowed: true, usagePerHour: 20, essential: false },
-            { id: 'telegram', name: 'تيليجرام (Telegram)', category: 'تواصل اجتماعي', icon: '✈️', allowed: false, usagePerHour: 18, essential: false },
-            { id: 'youtube', name: 'يوتيوب (YouTube)', category: 'فيديو وترفيه', icon: '▶️', allowed: false, usagePerHour: 85, essential: false },
-            { id: 'facebook', name: 'فيسبوك (Facebook)', category: 'تواصل اجتماعي', icon: '📘', allowed: false, usagePerHour: 55, essential: false },
-            { id: 'tiktok', name: 'تيك توك (TikTok)', category: 'فيديو وترفيه', icon: '🎵', allowed: false, usagePerHour: 95, essential: false },
-            { id: 'googleplay', name: 'متجر جوجل بلاي (Google Play)', category: 'أدوات ونظام', icon: '🛍️', allowed: false, usagePerHour: 70, essential: false },
-            { id: 'sysupdate', name: 'تحديثات النظام (System Updates)', category: 'أدوات ونظام', icon: '⚙️', allowed: false, usagePerHour: 65, essential: false }
-        ];
+  <script>
+    const DEFAULT_APPS = [
+      { id: 1, name: "واتساب (WhatsApp)", category: "work", rate: 15, allowed: true },
+      { id: 2, name: "متصفح جوجل كروم (Chrome)", category: "work", rate: 45, allowed: true },
+      { id: 3, name: "منصات التعليم والذكاء الاصطناعي", category: "work", rate: 35, allowed: true },
+      { id: 4, name: "فيسبوك (Facebook)", category: "social", rate: 85, allowed: false },
+      { id: 5, name: "يوتيوب (YouTube)", category: "media", rate: 120, allowed: false },
+      { id: 6, name: "تيك توك (TikTok)", category: "media", rate: 110, allowed: false },
+      { id: 7, name: "إنستغرام (Instagram)", category: "social", rate: 75, allowed: false },
+      { id: 8, name: "متجر جوجل بلاي (تحديثات تلقائية)", category: "system", rate: 65, allowed: false },
+      { id: 9, name: "سناب شات (Snapchat)", category: "social", rate: 55, allowed: false },
+      { id: 10, name: "تيليجرام (Telegram)", category: "social", rate: 30, allowed: false },
+      { id: 11, name: "الألعاب والتطبيقات الترفيهية", category: "media", rate: 48, allowed: false },
+      { id: 12, name: "مزامنة الصور والسحابة التلقائية", category: "system", rate: 40, allowed: false }
+    ];
 
-        const WINDOWS_BLOCKER_SCRIPT = `@echo off
-:: ============================================================================
-:: Smart Data Guard - Windows Ad & Background Telemetry Blocker
-:: تصميم وتطوير الأستاذ عمر حسان عبره | واتساب: 00967737219181
-:: ============================================================================
-echo Applying Smart Data Guard Ad & Telemetry Rules...
-set HOSTS=%WINDIR%\\System32\\drivers\\etc\\hosts
+    function getTodayKey() {
+      const d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
 
-findstr /C:"Smart Data Guard" "%HOSTS%" >nul 2>&1
-if %errorlevel%==0 (
-    echo Rules already applied!
-) else (
-    echo. >> "%HOSTS%"
-    echo # Smart Data Guard - Blocked Ad & Telemetry Servers >> "%HOSTS%"
-    echo 0.0.0.0 doubleclick.net >> "%HOSTS%"
-    echo 0.0.0.0 googleadservices.com >> "%HOSTS%"
-    echo 0.0.0.0 pagead2.googlesyndication.com >> "%HOSTS%"
-    echo 0.0.0.0 adservice.google.com >> "%HOSTS%"
-    echo 0.0.0.0 analytics.google.com >> "%HOSTS%"
-    echo 0.0.0.0 ads.tiktok.com >> "%HOSTS%"
-    echo 0.0.0.0 telemetry.microsoft.com >> "%HOSTS%"
-    echo 0.0.0.0 vortex.data.microsoft.com >> "%HOSTS%"
-    echo 0.0.0.0 settings-win.data.microsoft.com >> "%HOSTS%"
-    ipconfig /flushdns >nul
-    echo Done! Ads and background telemetry blocked successfully.
-)
+    let state = {
+      shieldActive: true,
+      mode: "work",
+      savedMb: 0,
+      apps: JSON.parse(JSON.stringify(DEFAULT_APPS)),
+      pkgTotalGb: 10.54,
+      pkgDays: 36,
+      pkgElapsedDays: 0,
+      totalUsedMb: 0,
+      pkgPrice: 1250,
+      dailyLogs: {}, // { "2026-11-20": 250 }
+      lastAddedMb: 0
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem("smartDataGuardState_v3");
+      if (saved) {
+        try {
+          state = { ...state, ...JSON.parse(saved) };
+        } catch (e) {}
+      }
+      const today = getTodayKey();
+      if (state.dailyLogs[today] === undefined) {
+        state.dailyLogs[today] = 0;
+      }
+      document.getElementById("todayDateLabel").textContent = "📅 اليوم: " + today;
+      document.getElementById("pkgTotalGb").value = state.pkgTotalGb;
+      document.getElementById("pkgDays").value = state.pkgDays;
+      document.getElementById("pkgElapsedDays").value = state.pkgElapsedDays;
+      document.getElementById("pkgUsedValue").value = Math.round(state.totalUsedMb * 100) / 100;
+      document.getElementById("pkgUsedUnit").value = "MB";
+      document.getElementById("pkgPrice").value = state.pkgPrice;
+    }
+
+    function saveState() {
+      localStorage.setItem("smartDataGuardState_v3", JSON.stringify(state));
+    }
+
+    function addTodayUsage() {
+      const amount = parseFloat(document.getElementById("quickAddAmount").value);
+      const unit = document.getElementById("quickAddUnit").value;
+      if (!amount || amount <= 0) {
+        alert("يرجى إدخال كمية الاستهلاك أولاً (مثلاً 250 MB أو 0.5 GB).");
+        return;
+      }
+      const addedMb = unit === "GB" ? amount * 1024 : amount;
+      const today = getTodayKey();
+      state.dailyLogs[today] = (state.dailyLogs[today] || 0) + addedMb;
+      state.totalUsedMb = (state.totalUsedMb || 0) + addedMb;
+      state.lastAddedMb = addedMb;
+
+      document.getElementById("quickAddAmount").value = "";
+      document.getElementById("pkgUsedValue").value = Math.round(state.totalUsedMb * 100) / 100;
+      document.getElementById("pkgUsedUnit").value = "MB";
+
+      saveState();
+      updateUI();
+    }
+
+    function undoLastLog() {
+      if (!state.lastAddedMb || state.lastAddedMb <= 0) {
+        alert("لا توجد عملية إضافة حديثة للتراجع عنها.");
+        return;
+      }
+      const today = getTodayKey();
+      state.dailyLogs[today] = Math.max(0, (state.dailyLogs[today] || 0) - state.lastAddedMb);
+      state.totalUsedMb = Math.max(0, (state.totalUsedMb || 0) - state.lastAddedMb);
+      state.lastAddedMb = 0;
+
+      document.getElementById("pkgUsedValue").value = Math.round(state.totalUsedMb * 100) / 100;
+      document.getElementById("pkgUsedUnit").value = "MB";
+
+      saveState();
+      updateUI();
+    }
+
+    function resetTodayUsage() {
+      const today = getTodayKey();
+      const todayVal = state.dailyLogs[today] || 0;
+      if (todayVal <= 0) return;
+      if (confirm("هل تريد تصفير عداد استهلاك اليوم فقط؟")) {
+        state.totalUsedMb = Math.max(0, state.totalUsedMb - todayVal);
+        state.dailyLogs[today] = 0;
+        state.lastAddedMb = 0;
+        document.getElementById("pkgUsedValue").value = Math.round(state.totalUsedMb * 100) / 100;
+        document.getElementById("pkgUsedUnit").value = "MB";
+        saveState();
+        updateUI();
+      }
+    }
+
+    function syncCalculatorInputs() {
+      const totalGb = Math.max(0.1, parseFloat(document.getElementById("pkgTotalGb").value) || 0);
+      const totalDays = Math.max(1, parseInt(document.getElementById("pkgDays").value, 10) || 1);
+      let elapsedDays = Math.max(0, parseInt(document.getElementById("pkgElapsedDays").value, 10) || 0);
+
+      if (elapsedDays >= totalDays) {
+        elapsedDays = totalDays - 1;
+        document.getElementById("pkgElapsedDays").value = elapsedDays;
+      }
+
+      const usedVal = Math.max(0, parseFloat(document.getElementById("pkgUsedValue").value) || 0);
+      const usedUnit = document.getElementById("pkgUsedUnit").value;
+      const price = Math.max(0, parseFloat(document.getElementById("pkgPrice").value) || 0);
+
+      state.pkgTotalGb = totalGb;
+      state.pkgDays = totalDays;
+      state.pkgElapsedDays = elapsedDays;
+      state.totalUsedMb = usedUnit === "GB" ? usedVal * 1024 : usedVal;
+      state.pkgPrice = price;
+
+      saveState();
+      updateBalanceAndHistory();
+      updateStatsSummary();
+    }
+
+    function updateBalanceAndHistory() {
+      const today = getTodayKey();
+      const totalMb = state.pkgTotalGb * 1024;
+      const usedMb = state.totalUsedMb || 0;
+      const remainingMb = Math.max(0, totalMb - usedMb);
+      const remainingGb = remainingMb / 1024;
+      const remainingDays = Math.max(1, state.pkgDays - state.pkgElapsedDays);
+
+      const dailySafeMb = totalMb / state.pkgDays;
+      const adjustedDailyMb = remainingMb / remainingDays;
+      const todayUsedMb = state.dailyLogs[today] || 0;
+      const todayLeftMb = Math.max(0, adjustedDailyMb - todayUsedMb);
+
+      // تحديث البطاقة العلوية
+      document.getElementById("topRemainingGb").textContent = remainingGb.toFixed(2) + " GB";
+      document.getElementById("topRemainingMb").textContent = `${Math.round(remainingMb)} MB متبقية من الباقة`;
+
+      document.getElementById("topTodayUsed").textContent = Math.round(todayUsedMb) + " MB";
+      document.getElementById("topTodaySub").textContent = (todayUsedMb / 1024).toFixed(2) + " GB اليوم";
+
+      document.getElementById("topTodayLeft").textContent = Math.round(todayLeftMb) + " MB";
+      document.getElementById("topDailyLimitSub").textContent = `الحد اليومي الآمن: ${Math.round(adjustedDailyMb)} MB`;
+
+      const remainPercent = Math.max(0, Math.min(100, (remainingMb / totalMb) * 100));
+      const bar = document.getElementById("balanceProgressBar");
+      bar.style.width = remainPercent + "%";
+      if (remainPercent < 20) {
+        bar.style.background = "#dc2626";
+      } else if (remainPercent < 50) {
+        bar.style.background = "#d97706";
+      } else {
+        bar.style.background = "linear-gradient(90deg, #16a34a, #0284c7)";
+      }
+
+      // التنبيه الذكي
+      const alertBox = document.getElementById("calcAlert");
+      if (remainingMb <= 0) {
+        alertBox.className = "alert-box alert-red";
+        alertBox.textContent = "🚨 تنبيه: لقد استهلكت كامل رصيد الباقة! يُنصح بتفعيل وضع التوفير الأقصى فوراً.";
+      } else if (todayUsedMb > adjustedDailyMb) {
+        alertBox.className = "alert-box alert-gold";
+        alertBox.textContent = `⚠️ تنبيه اليوم: لقد تجاوزت حصتك اليومية (${Math.round(todayUsedMb)} MB من أصل ${Math.round(adjustedDailyMb)} MB). يُنصح بتفعيل وضع التوفير الأقصى لبقية اليوم.`;
+      } else {
+        alertBox.className = "alert-box alert-green";
+        alertBox.textContent = `✅ مؤشر أخضر (وضع آمن): متبقي في رصيدك ${remainingGb.toFixed(2)} GB (${Math.round(remainingMb)} MB) للأيام المتبقية (${remainingDays} يوم)، ومتبقي لك اليوم ${Math.round(todayLeftMb)} MB.`;
+      }
+
+      // جدول سجل الأيام
+      const tbody = document.getElementById("dailyHistoryBody");
+      tbody.innerHTML = "";
+      const dates = Object.keys(state.dailyLogs).sort().reverse();
+      dates.forEach(dateStr => {
+        const mb = state.dailyLogs[dateStr] || 0;
+        const tr = document.createElement("tr");
+        const statusText = mb <= dailySafeMb ? "✅ منضبط" : "⚠️ مرتفع";
+        tr.innerHTML = `
+          <td><strong>${dateStr}</strong></td>
+          <td>${Math.round(mb)} MB</td>
+          <td>${(mb / 1024).toFixed(2)} GB</td>
+          <td>${statusText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleGuide() {
+      const box = document.getElementById("guideBox");
+      box.style.display = box.style.display === "block" ? "none" : "block";
+    }
+
+    function openTab(tabId, btn) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      btn.classList.add("active");
+    }
+
+    function toggleShield() {
+      state.shieldActive = !state.shieldActive;
+      saveState();
+      updateUI();
+    }
+
+    function applyMode(mode) {
+      state.mode = mode;
+      state.shieldActive = true;
+      state.apps.forEach(app => {
+        if (mode === "free") {
+          app.allowed = true;
+        } else if (mode === "ultra") {
+          app.allowed = app.name.includes("واتساب");
+        } else {
+          app.allowed = app.category === "work";
+        }
+      });
+      saveState();
+      updateUI();
+    }
+
+    function toggleApp(id) {
+      const app = state.apps.find(a => a.id === id);
+      if (app) {
+        app.allowed = !app.allowed;
+        saveState();
+        updateUI();
+      }
+    }
+
+    function addCustomApp() {
+      const nameInput = document.getElementById("newAppName");
+      const rateInput = document.getElementById("newAppRate");
+      const name = nameInput.value.trim();
+      if (!name) return alert("يرجى كتابة اسم التطبيق أولاً.");
+      state.apps.unshift({
+        id: Date.now(),
+        name: name,
+        category: "custom",
+        rate: parseInt(rateInput.value, 10) || 30,
+        allowed: false
+      });
+      nameInput.value = "";
+      saveState();
+      updateUI();
+    }
+
+    function renderApps() {
+      const container = document.getElementById("appsContainer");
+      const query = document.getElementById("searchAppInput").value.trim().toLowerCase();
+      container.innerHTML = "";
+
+      state.apps
+        .filter(app => app.name.toLowerCase().includes(query))
+        .forEach(app => {
+          const div = document.createElement("div");
+          div.className = "app-card " + (app.allowed ? "allowed" : "blocked");
+          div.innerHTML = `
+            <div class="app-info">
+              <strong>${app.name}</strong>
+              <small>${app.allowed ? "✅ مسموح بالعمل في الخلفية" : "🔒 مقيد في الخلفية (يفتح يدوياً فقط)"} • ~${app.rate} MB/ساعة</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" ${app.allowed ? "checked" : ""} onchange="toggleApp(${app.id})" />
+              <span class="slider"></span>
+            </label>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function updateStatsSummary() {
+      const blockedApps = state.apps.filter(a => !a.allowed);
+      const hourlySave = state.shieldActive ? blockedApps.reduce((sum, a) => sum + a.rate, 0) : 0;
+
+      document.getElementById("blockedCountDisplay").textContent = blockedApps.length + " تطبيق";
+      document.getElementById("saveRateDisplay").textContent = `بمعدل ${hourlySave} MB/ساعة`;
+      document.getElementById("savedMbDisplay").textContent = state.savedMb.toFixed(2) + " MB";
+
+      const totalMb = (state.pkgTotalGb || 1) * 1024;
+      const costPerMb = (state.pkgPrice || 0) / totalMb;
+      const savedMoney = state.savedMb * costPerMb;
+      document.getElementById("savedMoneyDisplay").textContent = savedMoney.toFixed(1) + " ر.ي";
+    }
+
+    function updateUI() {
+      const btn = document.getElementById("mainShieldBtn");
+      const badge = document.getElementById("shieldBadge");
+      const title = document.getElementById("shieldTitle");
+      const desc = document.getElementById("shieldDesc");
+
+      if (state.shieldActive) {
+        btn.className = "shield-btn shield-on";
+        badge.style.background = "#dcfce7";
+        badge.style.color = "#166534";
+        badge.textContent = "نشط الآن";
+        title.textContent = "درع الحماية الذكي مُفعّل";
+        desc.textContent = "يتم تقييد التطبيقات غير الضرورية في الخلفية وتصفية طلبات الإعلانات.";
+      } else {
+        btn.className = "shield-btn shield-off";
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#991b1b";
+        badge.textContent = "متوقف مؤقتاً";
+        title.textContent = "درع الحماية متوقف";
+        desc.textContent = "اضغط على زر الدرع لإعادة تفعيل التوفير وحظر الخلفية.";
+      }
+
+      document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+      const activeModeBtn = document.getElementById("mode-" + state.mode);
+      if (activeModeBtn && state.shieldActive) activeModeBtn.classList.add("active");
+
+      renderApps();
+      updateBalanceAndHistory();
+      updateStatsSummary();
+    }
+
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("تم نسخ العنوان بنجاح: " + text);
+      });
+    }
+
+    function downloadWindowsBat() {
+      const script = `@echo off
+echo Adding AdGuard DNS and blocking ad trackers...
+netsh interface ip set dns name="Wi-Fi" static 94.140.14.14
+netsh interface ip add dns name="Wi-Fi" 94.140.15.15 index=2
+ipconfig /flushdns
+echo Done! Smart Data Guard active.
 pause`;
+      const blob = new Blob([script], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "Smart_Data_Guard_Windows.bat";
+      a.click();
+    }
 
-        function getInitialState() {
-            return {
-                shieldActive: true,
-                activeProfile: 'ultra',
-                savedMB: 18.40,
-                apps: JSON.parse(JSON.stringify(DEFAULT_APPS)),
-                budget: {
-                    size: 5,
-                    unit: 'GB',
-                    days: 30,
-                    elapsedDays: 7,
-                    usedMB: 1100,
-                    price: 2500
-                }
-            };
+    function exportSettings() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "smart_data_guard_backup.json";
+      a.click();
+    }
+
+    function importSettings(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          state = { ...state, ...imported };
+          saveState();
+          loadState();
+          updateUI();
+          alert("تم استيراد الإعدادات والسجل بنجاح!");
+        } catch (err) {
+          alert("ملف غير صالح.");
         }
+      };
+      reader.readAsText(file);
+    }
 
-        let state = getInitialState();
+    function resetDefaults() {
+      if (confirm("هل تريد استعادة جميع الإعدادات الافتراضية؟")) {
+        localStorage.removeItem("smartDataGuardState_v3");
+        location.reload();
+      }
+    }
 
-        function loadState() {
-            try {
-                const saved = localStorage.getItem('smart_data_guard_omar_pro_v2');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    state = {
-                        ...getInitialState(),
-                        ...parsed,
-                        budget: { ...getInitialState().budget, ...(parsed.budget || {}) }
-                    };
-                }
-            } catch (e) {
-                console.warn('تعذر قراءة التخزين المحلي:', e);
-            }
-        }
+    setInterval(() => {
+      if (state.shieldActive) {
+        const blockedApps = state.apps.filter(a => !a.allowed);
+        const hourlySave = blockedApps.reduce((sum, a) => sum + a.rate, 0);
+        state.savedMb += hourlySave / 3600;
+        saveState();
+        updateStatsSummary();
+      }
+    }, 1000);
 
-        function saveState() {
-            try {
-                localStorage.setItem('smart_data_guard_omar_pro_v2', JSON.stringify(state));
-            } catch (e) {
-                console.warn('تعذر الحفظ في التخزين المحلي:', e);
-            }
-        }
-
-        // ==========================================
-        // مؤثرات صوتية خفيفة ونوافذ الإشعار والتأكيد
-        // ==========================================
-        function playChime(type = 'on') {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(type === 'on' ? 600 : 350, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(type === 'on' ? 900 : 220, ctx.currentTime + 0.14);
-                gain.gain.setValueAtTime(0.07, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.15);
-            } catch (e) {}
-        }
-
-        let toastTimer;
-        function showToast(msg, icon = '✅') {
-            const box = document.getElementById('toast-box');
-            document.getElementById('toast-msg').textContent = msg;
-            document.getElementById('toast-icon').textContent = icon;
-            box.classList.remove('hidden');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                box.classList.add('hidden');
-            }, 3200);
-        }
-
-        let pendingConfirmAction = null;
-        function openConfirmModal(title, desc, onConfirm) {
-            document.getElementById('confirm-title').textContent = title;
-            document.getElementById('confirm-desc').textContent = desc;
-            pendingConfirmAction = onConfirm;
-            document.getElementById('confirm-modal').classList.remove('hidden');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirm-modal').classList.add('hidden');
-            pendingConfirmAction = null;
-        }
-
-        document.getElementById('confirm-yes-btn').onclick = function () {
-            if (typeof pendingConfirmAction === 'function') {
-                pendingConfirmAction();
-            }
-            closeConfirmModal();
-        };
-
-        function toggleGuideModal(show) {
-            const modal = document.getElementById('guide-modal');
-            if (show) modal.classList.remove('hidden');
-            else modal.classList.add('hidden');
-        }
-
-        // ==========================================
-        // التحكم في الدرع الرئيسي والأوضاع الذكية
-        // ==========================================
-        function toggleMasterShield() {
-            state.shieldActive = !state.shieldActive;
-            playChime(state.shieldActive ? 'on' : 'off');
-            saveState();
-            renderApps();
-            updateDashboardUI();
-            showToast(
-                state.shieldActive ? 'تم تفعيل درع الحماية وتقييد خلفيات التطبيقات!' : 'تم إيقاف الدرع مؤقتاً.',
-                state.shieldActive ? '🛡️' : '⏸️'
-            );
-        }
-
-        function applyProfile(profileName) {
-            state.activeProfile = profileName;
-            if (profileName === 'work') {
-                // وضع العمل والدراسة: يسمح بالمتصفح، الواتساب، والتطبيقات التعليمية
-                state.apps.forEach(app => {
-                    app.allowed = (app.id === 'whatsapp' || app.id === 'chrome' || app.id === 'edu' || app.category === 'تعليم وعمل');
-                });
-                state.shieldActive = true;
-                showToast('تم تفعيل وضع العمل والدراسة (المتصفح والواتساب والتطبيقات التعليمية)', '📚');
-            } else if (profileName === 'ultra') {
-                // وضع التوفير الأقصى: يقيد كل شيء عدا الواتساب
-                state.apps.forEach(app => {
-                    app.allowed = (app.id === 'whatsapp');
-                });
-                state.shieldActive = true;
-                showToast('تم تفعيل وضع التوفير الأقصى للباقة!', '🔒');
-            } else if (profileName === 'free') {
-                // الوضع الحر: يسمح للكل
-                state.apps.forEach(app => {
-                    app.allowed = true;
-                });
-                showToast('تم تفعيل الوضع الحر (جميع التطبيقات مسموحة)', '🌐');
-            }
-            playChime('on');
-            saveState();
-            renderApps();
-            updateDashboardUI();
-        }
-
-        // ==========================================
-        // إدارة قائمة التطبيقات (بحث، تصفية، إضافة، حذف)
-        // ==========================================
-        function renderApps() {
-            const grid = document.getElementById('apps-grid');
-            const searchQuery = (document.getElementById('search-app-input').value || '').trim().toLowerCase();
-            const statusFilter = document.getElementById('filter-app-status').value;
-
-            grid.innerHTML = '';
-
-            const filteredApps = state.apps.filter(app => {
-                const matchesSearch = app.name.toLowerCase().includes(searchQuery) || (app.category || '').toLowerCase().includes(searchQuery);
-                const isRestricted = state.shieldActive && !app.allowed;
-                if (statusFilter === 'allowed') return matchesSearch && !isRestricted;
-                if (statusFilter === 'blocked') return matchesSearch && isRestricted;
-                return matchesSearch;
-            });
-
-            if (filteredApps.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-8 text-sm font-bold text-slate-400">لا توجد تطبيقات مطابقة لبحثك حالياً.</div>`;
-                return;
-            }
-
-            filteredApps.forEach(app => {
-                const realIndex = state.apps.findIndex(a => a.id === app.id);
-                const isRestricted = state.shieldActive && !app.allowed;
-
-                const card = document.createElement('div');
-                card.className = `p-3.5 rounded-2xl border transition flex flex-col justify-between gap-3 ${
-                    isRestricted
-                        ? 'bg-rose-50/50 border-rose-200'
-                        : 'bg-emerald-50/40 border-emerald-200'
-                }`;
-
-                card.innerHTML = `
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="text-2xl shrink-0">${app.icon || '📱'}</span>
-                            <div class="min-w-0">
-                                <div class="font-extrabold text-sm text-slate-800 truncate">${app.name}</div>
-                                <div class="text-[11px] text-slate-500 font-semibold">${app.category || 'تطبيق'} • ~${app.usagePerHour} MB/ساعة</div>
-                            </div>
-                        </div>
-                        ${!app.essential ? `<button onclick="removeApp(${realIndex})" title="حذف من القائمة" class="p-1 text-slate-400 hover:text-rose-600 text-xs font-bold cursor-pointer">✕</button>` : ''}
-                    </div>
-
-                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
-                        <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold ${
-                            isRestricted
-                                ? 'bg-rose-100 text-rose-800'
-                                : 'bg-emerald-100 text-emerald-800'
-                        }">
-                            ${isRestricted ? '🔒 مقيد في الخلفية (يفتح يدوياً فقط)' : '✅ مسموح في الخلفية'}
-                        </span>
-                        <button onclick="toggleApp(${realIndex})" class="px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer shrink-0 ${
-                            app.allowed
-                                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                                : 'bg-slate-700 hover:bg-slate-800 text-white'
-                        }">
-                            ${app.allowed ? 'تقييد' : 'سماح'}
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function toggleApp(index) {
-            if (index < 0 || index >= state.apps.length) return;
-            state.apps[index].allowed = !state.apps[index].allowed;
-            state.activeProfile = 'custom';
-            saveState();
-            renderApps();
-            updateDashboardUI();
-        }
-
-        function allowAllApps(allowState) {
-            state.apps.forEach(a => a.allowed = allowState);
-            state.activeProfile = allowState ? 'free' : 'custom';
-            saveState();
-            renderApps();
-            updateDashboardUI();
-            showToast(allowState ? 'تم السماح لجميع التطبيقات بالعمل في الخلفية' : 'تم تقييد جميع التطبيقات في الخلفية', allowState ? '✅' : '🔒');
-        }
-
-        function addCustomApp() {
-            const nameInput = document.getElementById('custom-app-name');
-            const catSelect = document.getElementById('custom-app-category');
-            const name = nameInput.value.trim();
-            if (!name) {
-                showToast('يرجى كتابة اسم التطبيق أو البرنامج أولاً', '⚠️');
-                return;
-            }
-            const selectedOption = catSelect.options[catSelect.selectedIndex];
-            const usage = parseInt(selectedOption.getAttribute('data-usage') || '35', 10);
-
-            state.apps.unshift({
-                id: 'custom_' + Date.now(),
-                name: name,
-                category: catSelect.value,
-                icon: '📲',
-                allowed: false,
-                usagePerHour: usage,
-                essential: false
-            });
-            nameInput.value = '';
-            state.activeProfile = 'custom';
-            saveState();
-            renderApps();
-            updateDashboardUI();
-            showToast(`تمت إضافة "${name}" وتقييده في الخلفية تلقائياً`, '🛡️');
-        }
-
-        function removeApp(index) {
-            if (index < 0 || index >= state.apps.length) return;
-            const removed = state.apps.splice(index, 1);
-            saveState();
-            renderApps();
-            updateDashboardUI();
-            showToast(`تم حذف "${removed[0].name}" من القائمة`, '🗑️');
-        }
-
-        // ==========================================
-        // تحديث الإحصائيات والعدادات الحية
-        // ==========================================
-        function updateDashboardUI() {
-            const btn = document.getElementById('master-toggle-btn');
-            const icon = document.getElementById('master-icon');
-            const label = document.getElementById('master-btn-label');
-            const title = document.getElementById('shield-status-title');
-            const desc = document.getElementById('shield-status-desc');
-
-            if (state.shieldActive) {
-                btn.className = 'w-28 h-28 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex flex-col items-center justify-center shadow-md transition-all cursor-pointer shield-active focus:outline-none';
-                icon.textContent = '🛡️';
-                label.textContent = 'نشط الآن';
-                title.textContent = 'درع الحماية الذكي مُفعّل';
-                title.className = 'mt-3 text-lg font-extrabold text-emerald-700';
-                desc.textContent = 'يتم تقييد التطبيقات غير الضرورية في الخلفية وتصفية طلبات الإعلانات.';
-            } else {
-                btn.className = 'w-28 h-28 rounded-full bg-slate-400 hover:bg-slate-500 text-white flex flex-col items-center justify-center shadow-md transition-all cursor-pointer focus:outline-none';
-                icon.textContent = '⏸️';
-                label.textContent = 'متوقف';
-                title.textContent = 'الدرع الذكي متوقف مؤقتاً';
-                title.className = 'mt-3 text-lg font-extrabold text-slate-600';
-                desc.textContent = 'اضغط على الزر أعلاه لتفعيل الحماية ومنع استهلاك الرصيد في الخلفية.';
-            }
-
-            const blockedApps = state.apps.filter(a => !a.allowed);
-            const savedRatePerHour = state.shieldActive
-                ? blockedApps.reduce((sum, app) => sum + app.usagePerHour, 0)
-                : 0;
-
-            document.getElementById('blocked-apps-count').textContent = state.shieldActive ? blockedApps.length : 0;
-            document.getElementById('rate-per-hour').textContent = savedRatePerHour;
-            document.getElementById('saved-mb-counter').textContent = state.savedMB.toFixed(2);
-
-            const totalPkgMB = state.budget.unit === 'GB' ? state.budget.size * 1024 : state.budget.size;
-            const costPerMB = totalPkgMB > 0 ? (state.budget.price / totalPkgMB) : 0;
-            const savedMoney = state.savedMB * costPerMB;
-            document.getElementById('saved-money-counter').textContent = savedMoney.toFixed(1);
-
-            ['work', 'ultra', 'free'].forEach(p => {
-                const el = document.getElementById('prof-' + p);
-                if (state.activeProfile === p) {
-                    el.classList.add('border-emerald-500', 'bg-emerald-50');
-                    el.classList.remove('border-sky-200', 'bg-white');
-                } else {
-                    el.classList.remove('border-emerald-500', 'bg-emerald-50');
-                    el.classList.add('border-sky-200', 'bg-white');
-                }
-            });
-        }
-
-        // محاكاة عداد توفير البيانات الحي كل 3 ثوانٍ
-        setInterval(() => {
-            if (state.shieldActive) {
-                const blockedApps = state.apps.filter(a => !a.allowed);
-                const savedRatePerHour = blockedApps.reduce((sum, app) => sum + app.usagePerHour, 0);
-                if (savedRatePerHour > 0) {
-                    const increment = (savedRatePerHour / 3600) * 3;
-                    state.savedMB += increment;
-                    document.getElementById('saved-mb-counter').textContent = state.savedMB.toFixed(2);
-
-                    const totalPkgMB = state.budget.unit === 'GB' ? state.budget.size * 1024 : state.budget.size;
-                    const costPerMB = totalPkgMB > 0 ? (state.budget.price / totalPkgMB) : 0;
-                    document.getElementById('saved-money-counter').textContent = (state.savedMB * costPerMB).toFixed(1);
-                    saveState();
-                }
-            }
-        }, 3000);
-
-        // ==========================================
-        // التنقل بين التبويبات
-        // ==========================================
-        function switchTab(tabName) {
-            ['apps', 'adblock', 'budget', 'backup'].forEach(t => {
-                const sec = document.getElementById('section-' + t);
-                const btn = document.getElementById('tab-btn-' + t);
-                if (t === tabName) {
-                    sec.classList.remove('hidden');
-                    btn.className = 'tab-btn py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-sky-600 text-white shadow-xs transition cursor-pointer';
-                } else {
-                    sec.classList.add('hidden');
-                    btn.className = 'tab-btn py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:bg-sky-50 transition cursor-pointer';
-                }
-            });
-        }
-
-        // ==========================================
-        // النسخ وتحميل ملفات الحظر للكمبيوتر
-        // ==========================================
-        function copyText(text, successMsg) {
-            const temp = document.createElement('textarea');
-            temp.value = text;
-            document.body.appendChild(temp);
-            temp.select();
-            try {
-                document.execCommand('copy');
-                showToast(successMsg || 'تم النسخ إلى الحافظة بنجاح!', '📋');
-            } catch (e) {
-                showToast('حدث خطأ أثناء النسخ', '⚠️');
-            }
-            document.body.removeChild(temp);
-        }
-
-        function downloadFile(filename, content, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function downloadWindowsScript(ext) {
-            const filename = ext === 'bat' ? 'SmartDataGuard_Blocker.bat' : 'SmartDataGuard_Rules.txt';
-            downloadFile(filename, WINDOWS_BLOCKER_SCRIPT, 'text/plain;charset=utf-8');
-            showToast(`تم تنزيل ملف ${filename} بنجاح!`, '💻');
-        }
-
-        // ==========================================
-        // حاسبة الباقة الذكية ومنبه الاستهلاك
-        // ==========================================
-        function calculateBudget() {
-            const size = parseFloat(document.getElementById('pkg-size').value) || 0;
-            const unit = document.getElementById('pkg-unit').value;
-            const days = parseInt(document.getElementById('pkg-days').value, 10) || 1;
-            const elapsedDays = parseInt(document.getElementById('pkg-elapsed-days').value, 10) || 0;
-            const usedMB = parseFloat(document.getElementById('pkg-used-mb').value) || 0;
-            const price = parseFloat(document.getElementById('pkg-price').value) || 0;
-
-            state.budget = { size, unit, days, elapsedDays, usedMB, price };
-            saveState();
-
-            const totalMB = unit === 'GB' ? size * 1024 : size;
-            const dailyMB = totalMB / days;
-            const remainingMB = Math.max(0, totalMB - usedMB);
-            const remainingDays = Math.max(1, days - elapsedDays);
-            const adjustedDailyMB = remainingMB / remainingDays;
-            const percent = totalMB > 0 ? Math.min(100, (usedMB / totalMB) * 100) : 0;
-
-            document.getElementById('daily-allowance-mb').textContent = dailyMB.toFixed(0);
-            document.getElementById('remaining-mb').textContent = remainingMB.toFixed(0);
-            document.getElementById('adjusted-daily-mb').textContent = adjustedDailyMB.toFixed(0);
-            document.getElementById('usage-percent').textContent = percent.toFixed(1);
-
-            const bar = document.getElementById('budget-progress-bar');
-            const advice = document.getElementById('smart-budget-advice');
-            bar.style.width = percent + '%';
-
-            if (percent >= 80) {
-                bar.className = 'bg-rose-500 h-full rounded-full transition-all duration-500';
-                advice.className = 'p-4 rounded-xl bg-rose-50 border-r-4 border-rose-500 text-xs sm:text-sm font-bold text-rose-900 leading-relaxed';
-                advice.textContent = `🚨 تنبيه أحمر (استهلاك مرتفع ${percent.toFixed(1)}%): المتبقي لديك ${remainingMB.toFixed(0)} MB فقط! فعّل "وضع التوفير الأقصى" فوراً ولا تتجاوز ${adjustedDailyMB.toFixed(0)} MB يومياً.`;
-            } else if (percent >= 55) {
-                bar.className = 'bg-amber-500 h-full rounded-full transition-all duration-500';
-                advice.className = 'p-4 rounded-xl bg-amber-50 border-r-4 border-amber-500 text-xs sm:text-sm font-bold text-amber-900 leading-relaxed';
-                advice.textContent = `⚠️ تنبيه ذهبي (حذر): استهلكت ${percent.toFixed(1)}% من باقتك. لتكفيك الباقة لنهاية المدة (${remainingDays} يوم متبقي)، اجعل حدك اليومي ${adjustedDailyMB.toFixed(0)} MB.`;
-            } else {
-                bar.className = 'bg-emerald-500 h-full rounded-full transition-all duration-500';
-                advice.className = 'p-4 rounded-xl bg-white border-r-4 border-emerald-500 text-xs sm:text-sm font-bold text-emerald-900 leading-relaxed';
-                advice.textContent = `✅ مؤشر أخضر (وضع آمن وممتاز): استهلاكك منضبط! يمكنك استخدام حتى ${adjustedDailyMB.toFixed(0)} MB يومياً بأمان تام مع استمرار عمل درع الحماية.`;
-            }
-
-            updateDashboardUI();
-        }
-
-        // ==========================================
-        // النسخ الاحتياطي: تصدير واستيراد JSON + استعادة الافتراضي
-        // ==========================================
-        function exportSettingsJSON() {
-            const exportPayload = {
-                appName: 'Smart Data Guard - حارس البيانات الذكي',
-                developer: 'الأستاذ عمر حسان عبره | واتساب: 00967737219181',
-                exportedAt: new Date().toISOString(),
-                data: state
-            };
-            const jsonString = JSON.stringify(exportPayload, null, 2);
-            const dateTag = new Date().toISOString().slice(0, 10);
-            downloadFile(`SmartDataGuard_Backup_${dateTag}.json`, jsonString, 'application/json;charset=utf-8');
-            showToast('تم تصدير النسخة الاحتياطية بنجاح!', '📤');
-        }
-
-        function importSettingsJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    const importedState = parsed.data ? parsed.data : parsed;
-                    if (!importedState || !Array.isArray(importedState.apps)) {
-                        throw new Error('صيغة الملف غير صالحة');
-                    }
-                    state = {
-                        ...getInitialState(),
-                        ...importedState,
-                        budget: { ...getInitialState().budget, ...(importedState.budget || {}) }
-                    };
-                    saveState();
-                    syncInputsFromState();
-                    renderApps();
-                    calculateBudget();
-                    updateDashboardUI();
-                    showToast('تم استيراد الإعدادات والقائمة بنجاح!', '📥');
-                } catch (err) {
-                    showToast('تعذر استيراد الملف: تأكد أنه ملف نسخة احتياطية صالح (.json)', '⚠️');
-                }
-                event.target.value = '';
-            };
-            reader.readAsText(file);
-        }
-
-        function confirmResetDefaults() {
-            openConfirmModal(
-                'استعادة الإعدادات الافتراضية',
-                'سيتم إرجاع قائمة التطبيقات وإعدادات الباقة وعداد التوفير إلى القيم الأصلية. هل تريد المتابعة؟',
-                function () {
-                    state = getInitialState();
-                    saveState();
-                    syncInputsFromState();
-                    renderApps();
-                    calculateBudget();
-                    updateDashboardUI();
-                    showToast('تمت استعادة الإعدادات الافتراضية بنجاح!', '🔄');
-                }
-            );
-        }
-
-        function syncInputsFromState() {
-            document.getElementById('pkg-size').value = state.budget.size;
-            document.getElementById('pkg-unit').value = state.budget.unit;
-            document.getElementById('pkg-days').value = state.budget.days;
-            document.getElementById('pkg-elapsed-days').value = state.budget.elapsedDays || 0;
-            document.getElementById('pkg-used-mb').value = state.budget.usedMB;
-            document.getElementById('pkg-price').value = state.budget.price;
-        }
-
-        // ==========================================
-        // التهيئة عند تشغيل الصفحة
-        // ==========================================
-        window.onload = function () {
-            loadState();
-            document.getElementById('windows-script-preview').value = WINDOWS_BLOCKER_SCRIPT;
-            syncInputsFromState();
-            renderApps();
-            calculateBudget();
-            updateDashboardUI();
-        };
-    </script>
+    loadState();
+    updateUI();
+  </script>
 </body>
 </html>
